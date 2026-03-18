@@ -1,4 +1,4 @@
-const User = require("../models/user.model");
+const User = require("../models/user.models");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -53,9 +53,7 @@ const loginUser = async (req, res) => {
       });
     }
 
-    delete user.password;
-
-    const { _id } = user;
+    const { _id, fullName, department } = user;
     const expirySecs = 60 * 60; // One hour
     const token = jwt.sign({ _id }, process.env.JWT_SECRET_KEY, {
       expiresIn: expirySecs,
@@ -66,10 +64,14 @@ const loginUser = async (req, res) => {
       maxAge: expirySecs * 1000,
     });
 
-    res.status.json({
+    res.status(200).json({
       status: "SUCCESS",
-      message: `Welcome back, ${user.firstName}`,
-      user,
+      message: `Welcome back, ${user.fullName}`,
+      user: {
+        _id,
+        fullName,
+        department,
+      },
     });
   } catch (error) {
     res.status(500).json({
@@ -96,7 +98,7 @@ const logoutUser = async (req, res) => {
 
 const getCurrentUser = async (req, res) => {
   try {
-    const user = await User.findById(req._id).select("-password");
+    const user = await User.findById(req._id).select("fullName department");
     if (!user) {
       return res.status(404).json({
         status: "FAILED",

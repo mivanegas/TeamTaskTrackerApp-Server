@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
-const User = require("./user.model");
+const User = require("./user.models");
 
 const taskSchema = mongoose.Schema(
   {
     title: {
       type: String,
-      require: true,
+      required: true,
       minLength: 5,
     },
     description: {
@@ -15,7 +15,7 @@ const taskSchema = mongoose.Schema(
     priority: {
       type: String,
       enum: ["Low", "Medium", "High"],
-      default: "medium",
+      default: "Medium",
     },
     status: {
       type: String,
@@ -27,7 +27,7 @@ const taskSchema = mongoose.Schema(
     },
     creator: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: User,
+      ref: "User",
       required: true,
     },
   },
@@ -38,4 +38,4 @@ const taskSchema = mongoose.Schema(
 
 const Task = mongoose.model("Task", taskSchema);
 
-export default Task;
+module.exports = Task;
