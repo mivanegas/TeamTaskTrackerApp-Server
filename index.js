@@ -2,16 +2,29 @@ const express = require("express");
 const dotenv = require("dotenv");
 dotenv.config();
 const mongoose = require("mongoose");
+const cookieParser = require("cookie-parser");
+const cors = require("cors");
+
+const userRoutes = require("./src/routes/user.routes");
 
 const app = express();
+app.use(cookieParser());
+app.use(express.json());
+app.use(
+  cors({
+    origin: process.env.CLIENT_ORIGIN,
+    credentials: true,
+  }),
+);
 
-(app.get("/"),
-  (req, res) => {
-    res.json({
-      message: "Welcome to Team Task Tracker App Server",
-      now: new Date(),
-    });
+app.use("/users", userRoutes);
+
+app.get("/", (req, res) => {
+  res.json({
+    message: "Welcome to Team Task Tracker App Server",
+    now: new Date(),
   });
+});
 
 const PORT = process.env.PORT;
 mongoose.connect(process.env.MONGODB_URL).then(() => {
