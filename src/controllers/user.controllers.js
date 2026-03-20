@@ -6,6 +6,13 @@ const signupUser = async (req, res) => {
   try {
     const { fullName, email, password, department } = req.body;
 
+    if (password.length < 6) {
+      return res.status(400).json({
+        status: "FAILED",
+        message: "Password should be minimum 6 characters",
+      });
+    }
+
     const encryptedPassword = await bcrypt.hash(password, 10);
 
     await User.create({
